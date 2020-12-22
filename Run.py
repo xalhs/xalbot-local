@@ -407,7 +407,6 @@ while True:
                       except:
                           sendMessage(s , "something went wrong with the shoutout command")
                   if (message.lower()).startswith("!title ") and getBStatus(line) == True:
-                      sendMessage(s , titlechange(message.split(" " , 1)[1]))
                       try:
                           sendMessage(s , titlechange(message.split(" " , 1)[1]))
                       except:
