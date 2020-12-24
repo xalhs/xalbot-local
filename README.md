@@ -7,10 +7,11 @@ A twitch bot that supports various interactions on a twitch channel.
 
 - command-response support
 - Text to speech (both as a command and as a channel point reward)
-- twitch channel point integration; once configured, it can read channel point redemptions and do various commands like the text to speech mentioned above
-- points feature
-...Can give viewers points automatically
-...Points can be given (with the !give command) or gambled (with the !Roulette command)    
+- twitch channel point integration;   
+   once configured, it can read channel point redemptions and do various commands like the text to speech mentioned above
+- points feature   
+   Can give viewers points automatically   
+   Points can be given (with the !give command) or gambled (with the !Roulette command)    
 - changing title/game
 - math (can do many different math operations)
 - showing follow age (how long a user has been following another user)
