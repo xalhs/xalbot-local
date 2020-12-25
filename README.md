@@ -41,13 +41,32 @@ if you want song requests with channel points complete the NIGHTBOT_AUTH field a
 
 If you did the previous instructions correctly the bot should run after you run `Run.py`.
 
+## Guide for Playsounds:
+!!! **important note**!!!   
+You need the playsound pip module for this to work (I'll add it in the list of dependencies in the future).   
+
+
+This bot includes a way to play small sound files as chat commands.   
+In order to make it work you have to add the mp3 or wav files in the `var/playsounds` folder    
+then the commands will be triggered by a chat command of the form    
+```
+!playsound <playsound_name> 
+```
+<playsound_name> is the name of the mp3 file without the `.mp3` or `.wav` extenension.   
+For example we have the `Hello There.mp3` sound file in the `playsounds` folder to trigger it we would need a command like:   
+```
+!playsound hello there 
+```
+the <playsound_name> is not caps sensitive   
+
+
 TO BE ADDED, GUIDE FOR:
 - twitch channel points integration
-- playsounds
 - special playsounds
 - commands
 - "pastas"
 
+Also gonna add requirements eventually
 
 
 
