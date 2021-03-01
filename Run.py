@@ -26,6 +26,8 @@ from modules.wiki import wiki
 from modules.twitter import twitter
 from modules.uptime import uptime
 from modules.math_mod import math
+from modules.unmod import unmod
+
 import codecs
 import threading
 import multiprocessing
@@ -481,6 +483,8 @@ while True:
                       else:
                           sendMessage(s , "/me @" +user + " " + math(message.split("!math " , 1)[1]) )
 
+                  if message.lower() == "!unmod":
+                      if mod ==True:
               else:
                   print("#"*10 + " LINE IS NOT MESSAGE " + "#"*100)
                   print(line)

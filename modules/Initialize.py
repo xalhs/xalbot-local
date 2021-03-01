@@ -1,18 +1,14 @@
 import string
 from modules.Socket import sendMessage
-def joinRoom(s):
+def joinRoom(s , mode = "not silent"):
   readbuffer = ""
   Loading = True
   while Loading:
       print("begin loading")
       byterecv=s.recv(1024)
-    #  print("1")
       stringrecv= byterecv.decode("utf-8")
-     # print("2")
       readbuffer = readbuffer + stringrecv
-     # print("3")
       temp = str.split(readbuffer, "\n")
-     # print("4")
       readbuffer = temp.pop()
       print("printing lines")
 
@@ -28,7 +24,8 @@ def joinRoom(s):
   print("Sent: " + messageTemp)
   s.sendall(a5.encode("utf-8"))
   print("Sent: " + messageTemp2)
-  sendMessage(s, "dot")
+  if mode != "silent":
+      sendMessage(s, "dot")
 
 
 def loadingComplete(line, Loading):
@@ -36,7 +33,3 @@ def loadingComplete(line, Loading):
             return False
         else:
             return Loading
-        #    if("End of /NAMES list" in line):
-        #        return False
-        #    else:
-        #        return True
