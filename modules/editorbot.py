@@ -9,9 +9,6 @@ channel = CHANNEL
 
 def titlechange(title):
 
-    #request1 = requests.get('https://api.twitch.tv/helix/channels?broadcaster_id=' + broadcaster_id, headers= {"client-id": client_id , 'Authorization': 'Bearer ' + OAUTH}).json()
-    #game_id = request1['data'][0]['game_id']
-    #body = json.dumps({"title": title , "game_id": game_id})
     body = json.dumps({"title": title})
     request2 = requests.patch('https://api.twitch.tv/helix/channels?broadcaster_id=' + broadcaster_id, headers = {"client-id": client_id , 'Authorization': 'Bearer ' + OAUTH, "Accept": "application/vnd.twitchtv.v5+json" ,"Content-Type": "application/json"}, data = body)
 
@@ -29,7 +26,8 @@ def titlechange(title):
             return 'error ' + str(request2.json()['status']) + ", " + request2.json()['error'] + "; " + request2.json()['message']
         else:
             return 'something went wrong with titlechange command'
-
+    except:
+        print("UNKNOWN ERROR WITH TITLECHANGE")
 
 
 def gamechange(game):
@@ -69,3 +67,5 @@ def gamechange(game):
             return 'error ' + str(request2.json()['status']) + ", " + request2.json()['error'] + "; " + request2.json()['message']
         else:
             return 'something went wrong with gamechange command'
+    except:
+        print("UNKNOWN ERROR WITH GAMECHANGE")
