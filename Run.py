@@ -464,6 +464,7 @@ while True:
                           sendMessage(s , "/me no song is playing on nightbot right now")
                       else:
                           i = 0
+                          req_user = song[3]
                           while i < len(id_list):
                               if id_list[i] == song[2]:
                                   req_user = user_list[i]

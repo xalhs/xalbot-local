@@ -16,11 +16,11 @@ def songrequest(search):
 
 
     try:
-        duration = ((request.text).split('","duration":')[1]).split(',"title')[0]
-        title = ((request.text).split(',"title":"')[1]).split('","artist":"')[0]
-        artist = ((request.text).split('","artist":"')[1]).split('","url"')[0]
-        position = ((request.text).rsplit('"_position":', 1 )[1]).split('}}')[0]
-        id = (request.json())["item"]["_id"]
+        duration = request.json()['item']['track']['duration']
+        title = request.json()['item']['track']['title']
+        artist = request.json()['item']['track']['artist']
+        position = request.json()['item']['_position']
+        id = request.json()["item"]["_id"]
     except:
         return 0
     class Song:
@@ -52,8 +52,9 @@ def currentsong():
     artist = request["_currentSong"]["track"]["artist"]
     print(artist)
     url = request["_currentSong"]["track"]["url"]
+    name = request['_currentSong']['user']['displayName']
     id = request["_currentSong"]["_id"]
-    return[title, url , id]
+    return[title, url , id , name]
 
 
 
