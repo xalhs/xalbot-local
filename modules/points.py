@@ -4,73 +4,71 @@ import codecs
 import shutil
 import time
 from modules.Settings import CHANNEL
+import pandas as pd
 
 def points(name):
-    if os.path.isfile("var/points/" + name + ".txt"):
-        f= codecs.open("var/points/" + name + ".txt", "r" , "utf-8")
-        s = f.readline()
-        f.close()
-        return int(s)
-    else:
-        return 0
+    name = name.lower()
+    df = pd.read_csv('var/points/points.csv'  , index_col = 0).T
+    try:
+        return df[name]['points']
+    except:
+        return None
 
 def Roulette(name , amount):
-    p = points(name)
+    name = name.lower()
+    df = pd.read_csv('var/points/points.csv'  , index_col = 0).T
+    try:
+        p = df[name]['points']
+    except:
+        return 0
     if p < amount and amount > 0 :
         return 0
     else:
         s = random.random()
         print("s= " + str(s))
         if s < 0.5:
+            df[name]['points'] -= amount
+            df = df.T
+            df.to_csv('var/points/points.csv')
 
-            from_file = open("var/points/" + name + ".txt")
-            line = from_file.readline()
-            line = int(line) - amount
-            to_file = open("var/points/" + name + ".txt",mode="w")
-            str_line = str(line)
-            to_file.write(str_line)
-            shutil.copyfileobj(from_file, to_file)
-            from_file.close()
-            to_file.close()
             f= codecs.open("var/Roulette/" + name + ".txt", "a+" , "utf-8")
             f.write(((time.ctime(time.time())).split(" ", 1)[1]).rsplit(" " , 1)[0]  + " roulette: -" + str(amount) +  "\r\n")
             f.close()
             return -1
         else:
-            from_file = open("var/points/" + name + ".txt")
-            line = from_file.readline()
-            line = int(line) + amount
-            to_file = open("var/points/" + name + ".txt",mode="w")
-            str_line = str(line)
-            to_file.write(str_line)
-            shutil.copyfileobj(from_file, to_file)
-            from_file.close()
-            to_file.close()
+            df[name]['points'] += amount
+            df = df.T
+            df.to_csv('var/points/points.csv')
+
             f= codecs.open("var/Roulette/" + name + ".txt", "a+" , "utf-8")
             f.write(((time.ctime(time.time())).split(" ", 1)[1]).rsplit(" " , 1)[0] + " roulette: +" + str(amount) +  "\r\n")
             f.close()
             return 1
 
 def PointsIncrease(name, amount):
-    from_file = open("var/points/" + name + ".txt")
-    line = from_file.readline()
-    line = int(line) + amount
-    to_file = open("var/points/" + name + ".txt",mode="w")
-    str_line = str(line)
-    to_file.write(str_line)
-    shutil.copyfileobj(from_file, to_file)
-    from_file.close()
-    to_file.close()
+    name = name.lower()
+    df = pd.read_csv('var/points/points.csv'  , index_col = 0).T
+    df[name]['points'] += amount
+    df = df.T
+    df.to_csv('var/points/points.csv')
+
 
 def PointsDecrease(name, amount):
-    from_file = open("var/points/" + name + ".txt")
-    line = from_file.readline()
-    line = int(line) - amount
-    to_file = open("var/points/" + name + ".txt",mode="w")
-    str_line = str(line)
-    to_file.write(str_line)
-    shutil.copyfileobj(from_file, to_file)
-    from_file.close()
-    to_file.close()
+    name = name.lower()
+    df = pd.read_csv('var/points/points.csv'  , index_col = 0).T
+    df[name]['points'] -= amount
+    df = df.T
+    df.to_csv('var/points/points.csv')
+
+def rank(name):
+    name = name.lower()
+    df = pd.read_csv('var/points/points.csv'  , index_col = 0)
+    df = df.sort_values('points' , ascending=False).T
+    for i , user in enumerate(df):
+        i += 1
+        if user == name:
+            return [i , df[name]['points']]
+
+
 
 #def givePoints(user1, user2, amount):

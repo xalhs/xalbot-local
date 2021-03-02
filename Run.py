@@ -1,5 +1,5 @@
 import string
-from modules.Settings import CHANNEL, IDENT
+from modules.Settings import CHANNEL, IDENT ################
 from modules.ReadOLD import getUser, getMessage, getEmotes, getStatus, getBStatus, getPointRewards
 from modules.Socket import openSocket, sendMessage
 from modules.Initialize import joinRoom
@@ -8,7 +8,7 @@ from modules.twitchEmotes import twitchEmotes
 from modules.FFZ import ReloadFFZ, showFFZ
 from modules.BTTV import showBTTV
 #from modules.CleverbotSingleChat import chat
-from modules.points import points, Roulette, PointsIncrease, PointsDecrease
+from modules.points import points, Roulette, PointsIncrease, PointsDecrease, rank
 from modules.pasta import pasta, addpasta
 from modules.commands import addcommand, commands
 from modules.tts import tts, Pointstts  #, changettsVolume, actualttsvolume
@@ -27,6 +27,8 @@ from modules.twitter import twitter
 from modules.uptime import uptime
 from modules.math_mod import math
 from modules.unmod import unmod
+
+import pandas as pd
 
 import codecs
 import threading
@@ -240,7 +242,7 @@ while True:
                              globals.timer += maxdur
                          else:
                              globals.timer += duration
-                         sendMessage(s, user + " your video " + song.name + " by " + song.artist + " has beena added to the queue in position " +  song.pos)
+                         sendMessage(s, user + " your video " + song.name + " by " + song.artist + " has been added to the queue in position " +  song.pos)
 
 
                   if (pointRewards == 3):
@@ -254,13 +256,15 @@ while True:
                           sendMessage(s, "max video duration changed to " + str(maxdur))
                       except:
                           sendMessage(s, "could not change max duration to that value")
+                ##########################
                   if (message.lower()).startswith("!points") :
                       if message.lower() == "!points":
                           sendMessage(s, user + " you have " + str(points(user)) + " points")
-                      elif os.path.isfile("points/" + message.split(" ")[1] + ".txt"):
-                          sendMessage(s, 'user "' + message.split(" ")[1] + '" has ' + str(points(message.split(" ")[1])) + " points" )
-                      elif (message.lower()).startswith("!points "):
+                      elif points(message.split(" ")[1]) == None:
                           sendMessage(s, 'could not find user "' +  message.split(" ")[1] + '"')
+                      else:
+                          sendMessage(s, 'user "' + message.split(" ")[1] + '" has ' + str(points(message.split(" ")[1])) + " points" )
+
                   if (message.lower()).startswith("!roulette "):
                       amount = (message.lower()).split("!roulette ")[1]
                       if amount.endswith("%"):
@@ -304,7 +308,7 @@ while True:
                       except:
                           pass
                       if isinstance( amount, int):
-                          if os.path.isfile("points/" + receiver + ".txt"):
+                          if points(message.split(" ")[1]) != None:
                               if (amount > 0):
                                    PointsDecrease(user, amount)
                                    PointsIncrease(receiver, amount)
@@ -313,61 +317,22 @@ while True:
                                   sendMessage(s, user + " you can't give 0 points")
                           else:
                               sendMessage(s, "couldn not find user " + receiver)
-
                   if (message.lower()) == "!leaderboard":
-                      leaderboardnames = [ "a", "a", "a", "a", "a" ]
-                      leaderboard = [ -1, -1, -1, -1, -1]
-                      for filename in os.listdir("points"):
-                          print(filename)
-                          poi = points(filename.split(".")[0])
-            #              print( filename + " points = " + str(poi))
-                          if poi > leaderboard[4]:
-                              if poi > leaderboard[3]:
-                                  if poi > leaderboard[2]:
-                                      if poi > leaderboard[1]:
-                                          if poi > leaderboard[0]:
-                                              leaderboard[4] = leaderboard[3]
-                                              leaderboardnames[4] = leaderboardnames[3]
-                                              leaderboard[3] = leaderboard[2]
-                                              leaderboardnames[3] = leaderboardnames[2]
-                                              leaderboard[2] = leaderboard[1]
-                                              leaderboardnames[2] = leaderboardnames[1]
-                                              leaderboard[1] = leaderboard[0]
-                                              leaderboardnames[1] = leaderboardnames[0]
-                                              leaderboard[0] = poi
-                                              leaderboardnames[0] = filename.split(".")[0]
-                                          else:
-                                              leaderboard[4] = leaderboard[3]
-                                              leaderboardnames[4] = leaderboardnames[3]
-                                              leaderboard[3] = leaderboard[2]
-                                              leaderboardnames[3] = leaderboardnames[2]
-                                              leaderboard[2] = leaderboard[1]
-                                              leaderboardnames[2] = leaderboardnames[1]
-                                              leaderboard[1] = poi
-                                              leaderboardnames[1] = filename.split(".")[0]
-                                      else:
-                                          leaderboard[4] = leaderboard[3]
-                                          leaderboardnames[4] = leaderboardnames[3]
-                                          leaderboard[3] = leaderboard[2]
-                                          leaderboardnames[3] = leaderboardnames[2]
-                                          leaderboard[2] = poi
-                                          leaderboardnames[2] = filename.split(".")[0]
-                                  else:
-                                      leaderboard[4] = leaderboard[3]
-                                      leaderboardnames[4] = leaderboardnames[3]
-                                      leaderboard[3] = poi
-                                      leaderboardnames[3] = filename.split(".")[0]
-                              else:
-                                  leaderboard[4] = poi
-                                  leaderboardnames[4] = filename.split(".")[0]
-                      sendMessage(s, "leaderboards are: 1. " + leaderboardnames[0] + " with " + str(leaderboard[0]) + " points, 2. " + leaderboardnames[1] + " with " + str(leaderboard[1]) + " points, 3. " + leaderboardnames[2] + " with " + str(leaderboard[2]) + " points, 4. " + leaderboardnames[3] + " with " + str(leaderboard[3]) + " points, 5. " + leaderboardnames[4] + " with " + str(leaderboard[4]) + " points.")
+                      df = pd.read_csv('var/points/points.csv'  , index_col = 0)
+                      df = df.sort_values('points' , ascending=False).T
+                      snd = "leaderboards are: "
+                      for i , name in enumerate(df):
+                            if i < 5:
+                                snd += str(i+1) + ". " + name + " with " + str(df[name]['points']) + " points, "
+                                print(name + " " + str(df[name]['points']))
+                      snd = snd[:-2] + "."
+                      sendMessage(s , snd)
+
                   if (message.lower()) == "!rank":
-                      poiself = points(user)
-                      r = 0
-                      for filename in os.listdir("points"):
-                          if poiself <= points(filename.split(".")[0]):
-                              r += 1
-                      sendMessage(s, user + " your rank is " + str(r))
+                      rank = rank(user)
+                      sendMessage(s, user + " you are rank " + str(rank[0]) + " with " + str(rank[1]) + " points." )
+
+                    ######################################
                   if (message.lower()).startswith("!8ball "):
                        sendMessage(s, user + " " + eightball())
                   if (message.lower()).startswith("!clip") and mod == True:
@@ -440,7 +405,7 @@ while True:
                       for parts in wiki_array:
                           sendMessage(s , parts)
                 #      sendMessage(s , wiki(message.split(" ",1)[1]))
-                  if (message.lower().startswith("!w")) and (user == "xalhs"): #and (user == "NainsArrival"):
+                  if (message.lower().startswith("!w ")) and (user == "xalhs"): #and (user == "NainsArrival"):
                       sendMessage(s, "/w " + user + " " +  message.split(" " , 1)[1] + "\r\n")
 
                   if (message.lower().startswith("!twitter ")) and (mod == True or user == "xalhs"):
@@ -486,6 +451,18 @@ while True:
 
                   if message.lower() == "!unmod":
                       if mod ==True:
+
+                          if getBStatus(line) == True:
+                              sendMessage(s , "You can't unmod yourself FailFish you are the streamer")
+                          else:
+                              UnmodProcess = threading.Thread(target = unmod, args = (user,))
+                              UnmodProcess.start()
+                      else:
+                          sendMessage(s , "You are not a mod idiot, you can't get unmodded FailFish")
+
+
+
+
               else:
                   print("#"*10 + " LINE IS NOT MESSAGE " + "#"*100)
                   print(line)
