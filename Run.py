@@ -28,6 +28,8 @@ from modules.uptime import uptime
 from modules.math_mod import math
 from modules.unmod import unmod
 
+from modules.predictions import create_prediction, end_prediction
+
 import pandas as pd
 
 import codecs
@@ -85,7 +87,6 @@ CDweebslist = queue.Queue(maxsize=1000)
 id_list = []
 user_list = []
 #Deathcount = 0
-
 while True:
 
     try:
@@ -214,13 +215,10 @@ while True:
                       pttsQueue += 1
                   if (pointRewards == 2):
                      song = songrequest(message)
-                     if (song == 1):
-                         sendMessage(s, user + " can't add videos longer than 10 minutes to the queue")
-                     elif (song == 2):
-                         sendMessage(s, user + " can't add videos shorter than 30 seconds to the queue")
-                     elif (song == 0):
-                         sendMessage(s , user + " there was a problem adding your video to the queue")
-                     else:
+                     try:
+                         if (song[0] == 0):
+                             sendMessage(s, user + ", " + song[2])
+                     except:
                          duration = int(song.dur)
                          title = song.name
                          id = song.id
@@ -329,8 +327,9 @@ while True:
                       sendMessage(s , snd)
 
                   if (message.lower()) == "!rank":
-                      rank = rank(user)
-                      sendMessage(s, user + " you are rank " + str(rank[0]) + " with " + str(rank[1]) + " points." )
+                      print(user)
+                      rank2 = rank(user)
+                      sendMessage(s, user + " you are rank " + str(rank2[0]) + " with " + str(rank2[1]) + " points." )
 
                     ######################################
                   if (message.lower()).startswith("!8ball "):
@@ -370,7 +369,7 @@ while True:
                       sendMessage(s, "/me WEEBSDETECTED WEEBS OUT")
                   if (message.lower()).startswith("!so ") and mod == True:
                       try:
-                          sendMessage(s , shoutout(message.split("!so ")[1]))
+                          sendMessage(s , shoutout((message.lower()).split("!so ")[1]))
                       except:
                           sendMessage(s , "something went wrong with the shoutout command")
                   if (message.lower()).startswith("!title ") and getBStatus(line) == True:
@@ -459,6 +458,13 @@ while True:
                               UnmodProcess.start()
                       else:
                           sendMessage(s , "You are not a mod idiot, you can't get unmodded FailFish")
+
+                  if message.lower().startswith("!create_prediction") and mod == True:
+                      sendMessage(s , "/me " + create_prediction((message.split("!create_prediction ")[1]).split("|")))
+
+                  if message.lower().startswith("!end_prediction") and mod == True:
+                      sendMessage(s , "/me " + end_prediction(message.split("!end_prediction ")[1]))
+
 
 
 
