@@ -63,5 +63,11 @@ def getPointRewards(line):
             return 3
         if rewardsCode == "23e05424-ed89-4f4c-9716-cc12f1e69262":
             return 4
+        if rewardsCode == "a8d6bee4-2c09-44a4-a48e-e2478091bd90"
+            return 5
+        if rewardsCode == "12c0ee6d-8e10-4e98-b39b-96eb3466be5f"
+            return 6    
+
+
     except:
         return 0

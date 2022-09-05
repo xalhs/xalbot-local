@@ -29,6 +29,7 @@ from modules.math_mod import math
 from modules.unmod import unmod
 
 from modules.predictions import create_prediction, end_prediction
+from modules.WTDplaysounds import WTD
 
 import pandas as pd
 
@@ -247,6 +248,30 @@ while True:
                       waytoodank = "!playsound hey guys hows it going kripparrian here waytoodank"
                       PlaysoundProcess = threading.Thread(target = twitchPlaysoundWTD, args = (waytoodank,))
                       PlaysoundProcess.start()
+                  if (pointRewards == 5):
+                      psound = message
+                      #psound = message.split(" " , 1)[1]
+                      if os.path.isfile("var/playsounds/" + psound + ".mp3") or os.path.isfile("var/playsounds/" + psound + ".wav"):
+                          if os.path.isfile("var/SpecialPlaysounds/" + message+ "WAYTOODANK.mp3"):
+                              sendMessage(s, "/me @" + user + " playsound is already WAYTOODANK ified, refunding your points")
+                              UpdateRewardStatus(["WAYTOODANKIFY" , id_of_redemption , "CANCELED"])
+                          else:
+                              WTDProcess = threading.Thread(target = WTD, args = (message,))
+                              WTDProcess.start()
+                        #  UpdateRewardStatus(["WAYTOODANKIFY" , id_of_redemption , "FULFILLED"])
+                      else:
+                          sendMessage(s, "/me @" + user + " couldn't find the playsound, refunding your points")
+                          UpdateRewardStatus(["WAYTOODANKIFY" , id_of_redemption , "CANCELED"])
+                  if (pointRewards == 6):
+                      if os.path.isfile("var/SpecialPlaysounds/" + message+ "WAYTOODANK.mp3"):
+                          PlaysoundProcess = threading.Thread(target = twitchPlaysoundWTD, args = (message,))
+                          PlaysoundProcess.start()
+                          #UpdateRewardStatus(["Play Special Playsound" , id_of_redemption , "FULFILLED"])
+                      else:
+                          sendMessage(s, "/me @" + user + " couldn't find the playsound, refunding your points")
+                          UpdateRewardStatus(["Play Special Playsound" , id_of_redemption , "CANCELED"])
+
+
 
                   if (message.lower().startswith("!changemaxdur")) and mod == True:
                       try:
