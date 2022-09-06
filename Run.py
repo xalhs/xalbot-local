@@ -30,6 +30,7 @@ from modules.unmod import unmod
 
 from modules.predictions import create_prediction, end_prediction
 from modules.WTDplaysounds import WTD
+from modules.point_rewards import CreateReward, getRewardCode, UpdateRewardStatus, getRedemptionid
 
 import pandas as pd
 
@@ -136,6 +137,13 @@ while True:
                   emotes = getEmotes(line)
                   mod = getStatus(line)
                   pointRewards = getPointRewards(line)
+                  [pointRewards,reward_id] = getPointRewards(line)
+                  if pointRewards != 0:
+                      print("reward redeemed " + str(pointRewards) )
+                      try:
+                          id_of_redemption = getRedemptionid(user , message , reward_id)
+                      except:
+                          id_of_redemption = "yourmom"
     #              print("points rewards is " + str(pointRewards))
                   print(user + " typed :" + message)
                   print("typed emotes: " + emotes)
@@ -210,6 +218,10 @@ while True:
                           sendMessage(s, user + " wait for the previous tts message to end")
                       else:
                           sendMessage(s, user + " you don't have enough points to request tts")
+                  if (message.lower().startswith("!create_reward") and mod == True):
+                      reward_params = message.split(" " , 1)[1]
+                      reward_params = reward_params.split("|")
+                      sendMessage(s, "/me @" + user + " " + CreateReward(reward_params))
                   if (pointRewards == 1):
                       ttsProcess = threading.Thread(target = Pointstts, args = (message, pttsQueue,))
                       ttsProcess.start()
